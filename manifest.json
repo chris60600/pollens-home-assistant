@@ -1,0 +1,7 @@
+{
+  "domain": "pollens",
+  "name": "Reseau National de Surveillance Aerobiologique ((R.N.S.A.))",
+  "documentation": "https://pollens.fr/",
+  "requirements": [],
+  "codeowners": ["@"]
+}

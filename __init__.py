@@ -1,0 +1,1 @@
+"""Pollens Allergy component."""
