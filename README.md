@@ -1,6 +1,6 @@
 # Pollens home assistant
 
-This module show pollen concentration inside home assistant:
+This module show pollen concentration inside [Homeassistant](https://home-assistant.io):
 Datas provided by 'Réseau National de Surveillance Aérobiologique' (R.N.S.A.)
 https://pollens.fr
 
@@ -16,7 +16,12 @@ You can install this custom component using [HACS](https://hacs.xyz/) by adding 
 
 ### Manual install
 
-Copy this repository inside `config/custom_components/pollens`.
+1. Using the tool of choice open the directory (folder) for your HA configuration (where you find `configuration.yaml`).
+2. If you do not have a `custom_components` directory (folder) there, you need to create it.
+3. In the `custom_components` directory (folder) create a new folder called `pollens`.
+4. Download _all_ the files from the `custom_components/pollens/` directory (folder) in this repository.
+5. Place the files you downloaded in the new directory (folder) you created.
+6. Restart Home Assistant
 
 ## Configuration
 
@@ -28,6 +33,10 @@ sensor:
     location: "60"
     timeout: 60
 ```
+Name|Required|Description|Default
+--|--|--|--
+`location`|yes|Department number|
+`timeout`|no|Timeour for web site response| 
 
 This will create one sensor and severals attributes :
 * sensor.pollens_*dept*
