@@ -29,7 +29,7 @@ sensor:
     timeout: 60
 ```
 
-This will create 4 sensors and several attribute :
+This will create one sensor and severals attributes :
 * sensor.pollens_*dept*
   * attribution: Data from Reseau National de Surveillance Aerobiologique 
   * departement: departement
@@ -46,4 +46,11 @@ This will create 4 sensors and several attribute :
 * Urticacées 
 * Oseille
 * Graminées 
-* Chêne, Platane, Bouleau, Charme, Peuplier, Frêne, Saule, Cyprès.
+* Chêne
+* Platane
+* Bouleau
+* Charme
+* Peuplier
+* Frêne
+* Saule
+* Cyprès
