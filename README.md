@@ -32,7 +32,7 @@ sensor:
 This will create one sensor and severals attributes :
 * sensor.pollens_*dept*
   * attribution: Data from Reseau National de Surveillance Aerobiologique 
-  * departement: departement
+  * departement: *dept*
   * *pollen* : *concentration*
 
 Pollens are : 
