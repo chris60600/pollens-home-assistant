@@ -1,7 +1,7 @@
 {
   "domain": "pollens",
   "name": "Reseau National de Surveillance Aerobiologique ((R.N.S.A.))",
-  "documentation": "https://pollens.fr/",
+  "documentation": "https://github.com/chris60600/home-assistant/blob/main/custom-components/pollens/README.md",
   "requirements": [],
-  "codeowners": ["@"]
+  "codeowners": ["@chris60600"]
 }
