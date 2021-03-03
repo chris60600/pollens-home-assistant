@@ -35,22 +35,5 @@ This will create one sensor and severals attributes :
   * departement: departement
   * *pollen* : *concentration*
 
-* Tilleul
-* Ambroisies
-* Olivier
-* Plantain
-* Noisetier
-* Aulne
-* Armoise, 
-* Châtaignier
-* Urticacées 
-* Oseille
-* Graminées 
-* Chêne
-* Platane
-* Bouleau
-* Charme
-* Peuplier
-* Frêne
-* Saule
-* Cyprès
+Pollens are : 
+Tilleul, Ambroisies, Olivier, Plantain, Noisetier, Aulne, Armoise, Châtaignier, Urticacées, Oseille, Graminées, Chêne, Platane, Bouleau, Charme, Peuplier, Frêne, Saule, Cyprès.
