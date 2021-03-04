@@ -1,4 +1,4 @@
-﻿"""Support for the World Air Quality Index service."""
+﻿"""Support for the RNSA pollens service."""
 import asyncio
 from datetime import timedelta
 import logging
