@@ -4,4 +4,5 @@
   "documentation": "https://github.com/chris60600/home-assistant",
   "requirements": [],
   "codeowners": ["@chris60600"]
+  "version": "2021.3.1"
 }
