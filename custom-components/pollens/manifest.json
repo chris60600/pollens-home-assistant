@@ -3,6 +3,6 @@
   "name": "Reseau National de Surveillance Aerobiologique ((R.N.S.A.))",
   "documentation": "https://github.com/chris60600/home-assistant",
   "requirements": [],
-  "codeowners": ["@chris60600"]
+  "codeowners": ["@chris60600"],
   "version": "2021.3.1"
 }
