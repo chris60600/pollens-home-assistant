@@ -1,4 +1,5 @@
-[![](https://img.shields.io/badge/MAINTAINER-%40chris60600-red?style=for-the-badge)](https://github.com/chris60600)
+[![](https://img.shields.io/badge/MAINTAINER-%40chris60600-red)](https://github.com/chris60600)
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
 
 # HomeAssistant - Pollens Custom Component
 
