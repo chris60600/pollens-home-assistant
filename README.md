@@ -5,7 +5,7 @@ This module show pollen concentration inside [Homeassistant](https://home-assist
 Datas provided by 'Réseau National de Surveillance Aérobiologique' (R.N.S.A.)
 https://pollens.fr
 
-it's inspired by pappo work at [papo-o/home-assistant-config/integrations/](https://github.com/papo-o/home-assistant-config/blob/master/integrations/pollens.yaml).
+it's inspired by papoo work at [papo-o/home-assistant-config/integrations/](https://github.com/papo-o/home-assistant-config/blob/master/integrations/pollens.yaml).
 and dzvents script [pon.fr](https://pon.fr/dzvents-alerte-pollens/)
 
 
