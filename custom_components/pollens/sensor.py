@@ -65,7 +65,7 @@ KEY_TO_ATTR = {
     "frêne": ATTR_FRENE,
     "saule": ATTR_SAULE,
     "cyprès": ATTR_CYPRES,
-    "cupressaceées": ATTR_CUPRESSASEES,
+    "cupressacées": ATTR_CUPRESSASEES,
 }
 
 LIST_RISK = ["nul", "très faible", "faible", "moyen", "élevé", "très eleve"]
