@@ -73,8 +73,9 @@ LIST_RISK = ["nul", "très faible", "faible", "moyen", "élevé", "très eleve"]
 ICONS = {
     0: "mdi:check",
     1: "mdi:check",
+    2: "mdi:alert-outline",
     3: "mdi:alert-outline",
-    4: "mdi:alert-outline",
+    4: "mdi:alert",
     5: "mdi:alert",
 }
 
