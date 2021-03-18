@@ -40,6 +40,7 @@ ATTR_PEUPLIER = "peuplier"
 ATTR_FRENE = "frene"
 ATTR_SAULE = "saule"
 ATTR_CYPRES = "cypres"
+ATTR_CUPRESSASEES = "cupressacees"
 
 ATTR_COUNTY_NAME = "departement"
 ATTR_URL = "url"
@@ -64,6 +65,7 @@ KEY_TO_ATTR = {
     "frêne": ATTR_FRENE,
     "saule": ATTR_SAULE,
     "cyprès": ATTR_CYPRES,
+    "cupressaceées": ATTR_CUPRESSASEES,
 }
 
 LIST_RISK = ["nul", "très faible", "faible", "moyen", "élevé", "très eleve"]
@@ -74,7 +76,6 @@ ICONS = {
     3: "mdi:alert-outline",
     4: "mdi:alert-outline",
     5: "mdi:alert",
-    6: "mdi-alert",
 }
 
 ATTRIBUTION = "Data from Reseau National de Surveillance Aerobiologique "
