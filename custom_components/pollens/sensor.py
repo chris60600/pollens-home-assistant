@@ -84,6 +84,7 @@ ATTRIBUTION = "Data from Reseau National de Surveillance Aerobiologique "
 CONF_LOCATIONS = "location"
 CONF_TIMEOUT   = "timeout"
 CONF_SCANINTERVAL = "scaninterval"
+CONF_FILTER = "filter"
 
 SCAN_INTERVAL = timedelta(minutes=30)
 TIMEOUT = 30
@@ -93,6 +94,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         vol.Required(CONF_LOCATIONS): cv.string,
         vol.Optional(CONF_TIMEOUT, default=TIMEOUT): cv.positive_int,
         vol.Optional(CONF_SCANINTERVAL, default=SCAN_INTERVAL): cv.time_period,
+        vol.Optional(CONF_FILTER, default=0): cv.positive_int,
     }
 )
 
@@ -102,6 +104,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     county_number = config.get(CONF_LOCATIONS)
     timeout = config.get(CONF_TIMEOUT)
     scan_interval = config.get(CONF_SCAN_INTERVAL)
+    pollens_filter = config.get(CONF_FILTER)
     
     dev = []
     client = PollensClient(async_get_clientsession(hass), timeout=timeout)
@@ -122,14 +125,15 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
 class PollensSensor(Entity):
     """Implementation of a WAQI sensor."""
 
-    def __init__(self, client, county_number, county_name):
+    def __init__(self, client, county_number, county_name, pollens_filter):
         """Initialize the sensor."""
         self._client = client
 
         try:
             self.county_name = county_name
             self.county_number = county_number
-            _LOGGER.info("Init pollens sensor for %s county",self.county_name)
+            self.filter = pollens_filter
+            _LOGGER.info("Init pollens sensor for %s county (level=%d)",self.county_name, self.filter)
         except (KeyError, TypeError):
             self.county_name = None
             self.county_number = None
@@ -165,7 +169,7 @@ class PollensSensor(Entity):
 
 
     @property
-    def device_state_attributes(self):
+    def extra_state_attributes(self):
         """Return the state attributes of the last update."""
         attrs = {}
 
@@ -176,8 +180,8 @@ class PollensSensor(Entity):
                 attrs[ATTR_URL] = "https://pollens.fr"
                 attrs[ATTR_COUNTY_NAME] = self.county_name
             
-                risks = [item for item in self._data["risks"] if item["level"] > 0]
-                _LOGGER.info("%d risque(s) superieur à 0", len(risks))
+                risks = [item for item in self._data["risks"] if item["level"] >= self.filter]
+                _LOGGER.info("%d risque(s) superieur à %d", len(risks), self.filter)
                 for risk in risks:
                     _LOGGER.info("- Risque %s : %d", risk["pollenName"], risk["level"] )
                     attrs[KEY_TO_ATTR[risk["pollenName"].lower()]] = LIST_RISK[risk["level"]]
