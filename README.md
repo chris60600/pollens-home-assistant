@@ -33,11 +33,13 @@ sensor:
   - platform: pollens
     location: "60"
     timeout: 60
+    filter: 1
 ```
 Name|Required|Description|Default
 --|--|--|--
 `location`|yes|Department number|
-`timeout`|no|Timeour for web site response| 
+`timeout`|no|Timeout for web site response| 
+`filter`|no|Filter level under giving value|
 
 This will create one sensor and severals attributes :
 * sensor.pollens_*dept*
