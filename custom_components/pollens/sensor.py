@@ -111,7 +111,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     try:
         resp = json.loads(await client.Get(number=county_number))
         county_name = resp["countyName"]
-        pollens_sensor = PollensSensor(client, county_number, county_name)
+        pollens_sensor = PollensSensor(client, county_number, county_name, pollens_filter)
         dev.append(pollens_sensor)
     except (
         aiohttp.client_exceptions.ClientConnectorError,
