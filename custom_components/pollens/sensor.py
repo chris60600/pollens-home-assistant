@@ -3,9 +3,18 @@ import asyncio
 from datetime import timedelta
 import logging
 import json
+from os import name
 import sys
 import aiohttp
 import voluptuous as vol
+from homeassistant import config_entries
+from homeassistant.components import sensor
+from homeassistant.config_entries import ConfigEntry, SOURCE_IMPORT
+from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
+
+from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
+
+from homeassistant.core import HomeAssistant
 from .pollensasync import PollensClient
 
 from homeassistant.const import (
@@ -16,59 +25,28 @@ from homeassistant.exceptions import PlatformNotReady
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.config_validation import PLATFORM_SCHEMA
-from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
+
 import homeassistant.components.time_date.sensor as time_date
+from .const import (
+    DOMAIN,
+    LIST_RISK,
+    ATTR_URL,
+    ATTR_COUNTY_NAME,
+    KEY_TO_ATTR,
+    ATTRIBUTION,
+    COORDINATOR,
+    CONF_COUNTRYCODE,
+    CONF_LOCATIONS,
+    CONF_FILTER,
+    CONF_TIMEOUT,
+    CONF_SCANINTERVAL,
+)
+from . import PollensClient, PollensEntity, PollensUpdateCoordinator
 
 _LOGGER = logging.getLogger(__name__)
-
-ATTR_TILLEUL = "tilleul"
-ATTR_AMBROISIES = "ambroisies"
-ATTR_OLIVIER = "olivier"
-ATTR_PLANTAIN = "plantain"
-ATTR_NOISETIER= "noisetier"
-ATTR_AULNE = "aulne"
-ATTR_ARMOISE = "armoise"
-ATTR_CHATAIGNIER = "chataignier"
-ATTR_URTICACEES = "urticacees"
-ATTR_OSEILLE = "oseille"
-ATTR_GRAMINEES = "graminees"
-ATTR_CHENE = "chene"
-ATTR_PLATANE = "platane"
-ATTR_BOULEAU = "bouleau"
-ATTR_CHARME = "charme"
-ATTR_PEUPLIER = "peuplier"
-ATTR_FRENE = "frene"
-ATTR_SAULE = "saule"
-ATTR_CYPRES = "cypres"
-ATTR_CUPRESSASEES = "cupressacees"
-
-ATTR_COUNTY_NAME = "departement"
-ATTR_URL = "url"
-
-KEY_TO_ATTR = {
-    "tilleul":ATTR_TILLEUL,
-    "ambroisies": ATTR_AMBROISIES, 
-    "olivier": ATTR_OLIVIER,
-    "plantain": ATTR_PLANTAIN,
-    "noisetier": ATTR_NOISETIER,
-    "aulne": ATTR_AULNE,
-    "armoise": ATTR_ARMOISE,
-    "châtaignier": ATTR_CHATAIGNIER,
-    "urticacées": ATTR_URTICACEES,
-    "oseille": ATTR_OSEILLE,
-    "graminées": ATTR_GRAMINEES,
-    "chêne": ATTR_CHENE,
-    "platane": ATTR_PLATANE,
-    "bouleau": ATTR_BOULEAU,
-    "charme": ATTR_CHARME,
-    "peuplier": ATTR_PEUPLIER,
-    "frêne": ATTR_FRENE,
-    "saule": ATTR_SAULE,
-    "cyprès": ATTR_CYPRES,
-    "cupressacées": ATTR_CUPRESSASEES,
-}
-
-LIST_RISK = ["nul", "très faible", "faible", "moyen", "élevé", "très eleve"]
 
 ICONS = {
     0: "mdi:check",
@@ -79,12 +57,6 @@ ICONS = {
     5: "mdi:alert",
 }
 
-ATTRIBUTION = "Data from Reseau National de Surveillance Aerobiologique "
-
-CONF_LOCATIONS = "location"
-CONF_TIMEOUT   = "timeout"
-CONF_SCANINTERVAL = "scaninterval"
-CONF_FILTER = "filter"
 
 SCAN_INTERVAL = timedelta(minutes=30)
 TIMEOUT = 30
@@ -98,31 +70,129 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     }
 )
 
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
+
+async def async_setup_entry(
+    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+) -> None:
+    """Setup Sensor Plateform"""
+    coordinator = hass.data[DOMAIN][entry.entry_id][COORDINATOR]
+    # api: PollensClient = hass.data[DOMAIN][entry.entry_id]["pollens_api"]
+    sensors = []
+    # await api.Get("60")
+    for risk in coordinator.api.risks:
+        name = risk
+        icon = KEY_TO_ATTR[risk.lower()][1]
+        sensors.append(PollenSensor(coordinator, name=name, icon=icon, entry=entry))
+
+    name = f"pollens_{coordinator.county}"
+    icon = ICONS[0]
+    sensors.append(
+        RiskSensor(coordinator=coordinator, name=name, icon=icon, entry=entry)
+    )
+
+    async_add_entities(sensors, True)
+
+
+async def async_setup_platform(
+    hass: HomeAssistant,
+    config: ConfigType,
+    async_add_entities: AddEntitiesCallback,
+    discovery_info: None,
+) -> None:
     """Set up the requested Pollens location."""
-    
-    county_number = config.get(CONF_LOCATIONS)
-    timeout = config.get(CONF_TIMEOUT)
-    scan_interval = config.get(CONF_SCAN_INTERVAL)
-    pollens_filter = config.get(CONF_FILTER)
-    
-    dev = []
-    client = PollensClient(async_get_clientsession(hass), timeout=timeout)
-    try:
-        resp = json.loads(await client.Get(number=county_number))
-        county_name = resp["countyName"]
-        pollens_sensor = PollensSensor(client, county_number, county_name, pollens_filter)
-        dev.append(pollens_sensor)
-    except (
-        aiohttp.client_exceptions.ClientConnectorError,
-        asyncio.TimeoutError,
-    ) as err:
-        _LOGGER.exception("Failed to connect to  servers")
-        raise PlatformNotReady from err
-    async_add_entities(dev, True)
+    _LOGGER.warning(
+        "Loading Pollens via platform setup is deprecated. Please remove it from your yaml configuration"
+    )
+
+    # try:
+    #     county_number = config.pop(CONF_LOCATIONS)
+    #     pollens_filter = config.pop(CONF_FILTER)
+    #     timeout = config.pop(CONF_TIMEOUT)
+    #     scan_interval = config.pop(CONF_SCANINTERVAL)
+    # except KeyError:
+    #     pass
+
+    hass.async_create_task(
+        hass.config_entries.flow.async_init(
+            DOMAIN,
+            context={"source": SOURCE_IMPORT},
+            data=config,
+        )
+    )
 
 
-class PollensSensor(Entity):
+class PollenSensor(PollensEntity, SensorEntity):
+    """ """
+
+    def __init__(
+        self,
+        coordinator: PollensUpdateCoordinator,
+        name: str,
+        icon: str,
+        entry: ConfigEntry,
+    ) -> None:
+        super().__init__(coordinator, name, icon, entry)
+        self._name = f"pollens_{coordinator.county}_{KEY_TO_ATTR[name.lower()][0]}"
+        self._state = coordinator.api.risks[name]
+        self._unique_id = f"{entry.entry_id}_{self._name}"
+        self._attr_name = name
+        self._attr_unique_id = self._unique_id
+
+        self._attr_icon = icon
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def native_value(self):
+        value = self.coordinator.api.risks[self._attr_name]
+        return LIST_RISK[value]
+
+    @property
+    def unique_id(self):
+        """Return the unique id."""
+        return self._unique_id
+
+
+class RiskSensor(PollensEntity, SensorEntity):
+    """"""
+
+    def __init__(
+        self,
+        coordinator: PollensUpdateCoordinator,
+        name: str,
+        icon: str,
+        entry: ConfigEntry,
+    ) -> None:
+        super().__init__(coordinator, name, icon, entry)
+        self._risk_level = coordinator.api.risk_level
+        self._attr_unique_id = f"{entry.entry_id}_{coordinator.county}"
+        self._attr_icon = icon
+        self._name = name
+
+    @property
+    def native_value(self):
+        value = self.coordinator.api.risk_level
+        return LIST_RISK[value]
+
+    @property
+    def icon(self):
+        return ICONS[self._risk_level]
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def extra_state_attributes(self):
+        attrs = {}
+        attrs[ATTR_URL] = "https://pollens.fr"
+        attrs[ATTR_COUNTY_NAME] = self.coordinator.api.county_name
+        return attrs
+
+
+class PollensSensor(PollensEntity, SensorEntity):
     """Implementation of a WAQI sensor."""
 
     def __init__(self, client, county_number, county_name, pollens_filter):
@@ -133,7 +203,11 @@ class PollensSensor(Entity):
             self.county_name = county_name
             self.county_number = county_number
             self.filter = pollens_filter
-            _LOGGER.info("Init pollens sensor for %s county (level=%d)",self.county_name, self.filter)
+            _LOGGER.info(
+                "Init pollens sensor for %s county (level=%d)",
+                self.county_name,
+                self.filter,
+            )
         except (KeyError, TypeError):
             self.county_name = None
             self.county_number = None
@@ -145,7 +219,7 @@ class PollensSensor(Entity):
         """Return the name of the sensor."""
         if self.county_name:
             return f"pollens {self.county_name}"
-        return "pollens {}".format(county_number)
+        return f"pollens {self.county_number}"
 
     @property
     def icon(self):
@@ -167,7 +241,6 @@ class PollensSensor(Entity):
         """Return sensor availability."""
         return self._data is not None
 
-
     @property
     def extra_state_attributes(self):
         """Return the state attributes of the last update."""
@@ -179,23 +252,35 @@ class PollensSensor(Entity):
                 attrs[ATTR_ATTRIBUTION] = ATTRIBUTION
                 attrs[ATTR_URL] = "https://pollens.fr"
                 attrs[ATTR_COUNTY_NAME] = self.county_name
-            
-                risks = [item for item in self._data["risks"] if item["level"] >= self.filter]
+
+                risks = [
+                    item for item in self._data["risks"] if item["level"] >= self.filter
+                ]
                 _LOGGER.info("%d risque(s) superieur à %d", len(risks), self.filter)
                 for risk in risks:
-                    _LOGGER.info("- Risque %s : %d", risk["pollenName"], risk["level"] )
-                    attrs[KEY_TO_ATTR[risk["pollenName"].lower()]] = LIST_RISK[risk["level"]]
+                    _LOGGER.info("- Risque %s : %d", risk["pollenName"], risk["level"])
+                    attrs[KEY_TO_ATTR[risk["pollenName"].lower()]] = LIST_RISK[
+                        risk["level"]
+                    ]
                 return attrs
             except (IndexError, KeyError) as err:
-                _LOGGER.warning("%s: Attribution exception %s", self.name, "error {}".format(err))
+                _LOGGER.warning(
+                    "%s: Attribution exception %s", self.name, "error {}".format(err)
+                )
                 return {ATTR_ATTRIBUTION: ATTRIBUTION}
 
     async def async_update(self):
         """Get the latest data and updates the states and attributes."""
         if self.county_number:
-            _LOGGER.debug("%s: Updating sensor pollens for %s", self.name, self.county_name)
+            _LOGGER.debug(
+                "%s: Updating sensor pollens for %s", self.name, self.county_name
+            )
             result = json.loads(await self._client.Get(number=self.county_number))
-            _LOGGER.debug("%s: Pollens sensor updated. receive %d", self.name, sys.getsizeof(result))
+            _LOGGER.debug(
+                "%s: Pollens sensor updated. receive %d",
+                self.name,
+                sys.getsizeof(result),
+            )
         else:
             result = None
         self._data = result

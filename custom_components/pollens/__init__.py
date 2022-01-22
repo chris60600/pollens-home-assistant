@@ -1,1 +1,159 @@
 """Pollens Allergy component."""
+from __future__ import annotations
+from datetime import timedelta
+import logging
+from os import error
+from re import I
+from typing import Any
+
+from aiohttp.client_exceptions import ClientError
+
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CONF_SCAN_INTERVAL, Platform
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers import aiohttp_client
+from homeassistant.helpers.config_validation import SCRIPT_ACTION_FIRE_EVENT
+from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.device_registry import DeviceEntryType
+from homeassistant.helpers.update_coordinator import (
+    DataUpdateCoordinator,
+    CoordinatorEntity,
+    UpdateFailed,
+)
+
+from .const import (
+    ATTRIBUTION,
+    DOMAIN,
+    COORDINATOR,
+    CONF_COUNTRYCODE,
+    CONF_SCAN_INTERVAL,
+    KEY_TO_ATTR,
+)
+from .pollensasync import PollensClient
+
+# List of platforms to support. There should be a matching .py file for each,
+# eg <cover.py> and <sensor.py>
+PLATFORMS: list[str] = [Platform.SENSOR]
+
+_LOGGER = logging.getLogger(__name__)
+
+
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    """Set up pollens from a config entry."""
+
+    conf = entry.data
+
+    session = aiohttp_client.async_get_clientsession(hass)
+    api = PollensClient(session)
+
+    county = conf[CONF_COUNTRYCODE]
+    scan_interval = entry.options.get(CONF_SCAN_INTERVAL, 60)
+    # scan_interval = int(conf[CONF_SCAN_INTERVAL])
+    # level_filter = conf[CONF_FILTER]
+
+    await api.Get(county)
+
+    name = f"Pollens {api.county_name}"
+
+    coordinator = PollensUpdateCoordinator(
+        hass=hass,
+        name=name,
+        scan_interval=scan_interval,
+        # level_filter=level_filter,
+        county=county,
+        api=api,
+    )
+
+    await coordinator.async_config_entry_first_refresh()
+
+    hass.data.setdefault(DOMAIN, {})
+    hass.data[DOMAIN][entry.entry_id] = {
+        COORDINATOR: coordinator,
+        "pollens_api": api,
+    }
+
+    hass.config_entries.async_setup_platforms(entry, PLATFORMS)
+    return True
+
+
+async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    """Unload a config entry."""
+    # This is called when an entry/configured device is to be removed. The class
+    # needs to unload itself, and remove callbacks. See the classes for further
+    # details
+    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    if unload_ok:
+        hass.data[DOMAIN].pop(entry.entry_id)
+
+    return unload_ok
+
+
+class PollensUpdateCoordinator(DataUpdateCoordinator):
+    """Class to manage fetching Pollens data API"""
+
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        name: str,
+        scan_interval: int,
+        api: str,
+        county: str,
+        # level_filter: int,
+    ) -> None:
+
+        super().__init__(
+            hass=hass,
+            logger=_LOGGER,
+            name=name,
+            update_interval=timedelta(minutes=scan_interval),
+        )
+
+        self.api = api
+        self.name = name
+        self.county = county
+        # self.level_filter = int(level_filter)
+
+    async def _async_update_data(self):
+        _LOGGER.info("Update data from web site for %s", self.county)
+        try:
+            return await self.api.Get(self.county)
+        except ClientError as errot:
+            raise UpdateFailed(f"Errro updating from RSSA : {error}") from error
+
+
+class PollensEntity(CoordinatorEntity):
+    """Implementation of the base pollens Entity"""
+
+    _attr_extra_state_attributes = {"attribution": ATTRIBUTION}
+
+    def __init__(
+        self,
+        coordinator: PollensUpdateCoordinator,
+        name: str,
+        icon: str,
+        entry: ConfigEntry,
+    ) -> None:
+        """Initialize"""
+
+        super().__init__(coordinator=coordinator)
+
+        # self._attr_unique_id = f"{entry.entry_id}_{KEY_TO_ATTR[name.lower()][0]}"
+        # self._attr_icon = icon
+        # self._unique_id = f"pollens_{entry.entry_id}"
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        return DeviceInfo(
+            entry_type=DeviceEntryType.SERVICE,
+            identifiers={
+                (
+                    DOMAIN,
+                    str(
+                        f"{self.platform.config_entry.unique_id}{self.platform.config_entry.data['county']}"
+                    ),
+                )
+            },
+            manufacturer="RNSA",
+            model="Pollens sensor",
+            name=self.coordinator.name,
+        )

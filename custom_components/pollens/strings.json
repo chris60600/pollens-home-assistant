@@ -1,0 +1,25 @@
+{
+    "title": "Pollens",
+    "config": {
+      "step": {
+        "user": {
+          "title":"Pollens",
+          "description":"If you need information about pollens on site R.N.S.A. website, have a look here: https://www.pollens.fr",
+          "data": {
+            "county": "[%key:common::config_flow::data::county%]",
+            "scan_interval": "[%key:common::config_flow::data::scan_interval%]",
+            "filter": "[%key:common::config_flow::data::filter%]"
+          }
+        }
+      },
+      "error": {
+        "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
+        "unknown": "[%key:common::config_flow::error::unknown%]",
+        "invalid_county": "[%key:common::config_flow::error::invalid_county%]"
+      },
+      "abort": {
+        "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
+        "single_instance_allowed": "[%key:common::config_flow::abort::single_instance_allowed"
+      }
+    }
+  }

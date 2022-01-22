@@ -1,0 +1,25 @@
+{
+    "title": "Pollens",
+    "config": {
+        "abort": {
+            "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
+            "single_instance_allowed": "Une seule configuration de Pollens est autoris\u00e9e"
+        },
+        "error": {
+            "cannot_connect": "Impossible de se connecter au serveur",
+            "invalid_county": "Un seul d\u00e9partment est actuellemnt g\u00e9r\u00e9",
+            "unknown": "Erreur inconnue"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "county": "D\u00e9partement",
+                    "scan_interval": "P\u00e9riode d\u0027int\u00e9rogation",
+                    "filter": "Filtrage du niveau"
+                },
+                "title":"Pollens",
+                "description":"Si vous avez besoin d\u0027information sur les pollens rendez vous sur le site du R.N.S.A, https://www.pollens.fr"
+            }
+        }
+   }
+}

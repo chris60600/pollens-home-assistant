@@ -1,0 +1,23 @@
+{
+    "title": "Pollens (from R.N.S.A. website)\r\nPlease visit www.pollen.fr for more information",
+    "config": {
+        "abort": {
+            "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
+            "single_instance_allowed": "Only one configuration of Pollens allowed"
+        },
+        "error": {
+            "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
+            "invalid_county": "Only one county is actualy allowed",
+            "unknown": "[%key:common::config_flow::error::unknown%]"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "county": "County",
+                    "scan_interval": "Scan interval",
+                    "filter": "Filter level"
+                }
+            }
+        }
+   }
+}
