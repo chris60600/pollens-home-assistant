@@ -25,6 +25,7 @@ You can install this custom component using [HACS](https://hacs.xyz/) by adding 
 6. Restart Home Assistant
 
 ## Configuration
+The pollens integration is now available in the Integration Menu
 
 Add this to your `configuration.yaml`:
 
