@@ -38,9 +38,9 @@ sensor:
 ```
 Name|Required|Description|Default
 --|--|--|--
-`location`|yes|Department number|||
-`timeout`|no|Timeout for web site response||deprecated|
-`filter`|no|Filter level under giving value|0|deprecated|
+`location`|yes|Department number||
+`timeout`|no|Timeout for web site response| (deprecated) |
+`filter`|no|Filter level under giving value|0 (deprecated)|
 
 This will create one sensor and severals attributes :
 * sensor.pollens_*dept*
