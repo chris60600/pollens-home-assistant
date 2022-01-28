@@ -38,15 +38,16 @@ sensor:
 ```
 Name|Required|Description|Default
 --|--|--|--
-`location`|yes|Department number|
-`timeout`|no|Timeout for web site response| 
-`filter`|no|Filter level under giving value|0
+`location`|yes|Department number||
+`timeout`|no|Timeout for web site response| (deprecated) |
+`filter`|no|Filter level under giving value|0 (deprecated)|
 
-This will create one sensor and severals attributes :
+This will create one sensor ~~and severals attributes~~ :
 * sensor.pollens_*dept*
   * attribution: Data from Reseau National de Surveillance Aerobiologique 
   * departement: *dept*
   * *pollen* : *concentration*
 
-Pollens are : 
+Sensors with particular Pollens like : 
 Tilleul, Ambroisies, Olivier, Plantain, Noisetier, Aulne, Armoise, Châtaignier, Urticacées, Oseille, Graminées, Chêne, Platane, Bouleau, Charme, Peuplier, Frêne, Saule, Cyprès, Cupressacées.
+All sensors are named sensor.pollens_*dept*_*pollen-name*
