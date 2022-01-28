@@ -26,8 +26,15 @@ You can install this custom component using [HACS](https://hacs.xyz/) by adding 
 
 ## Configuration
 The pollens integration is now available in the Integration Menu
+1. Select your county
+2. Untick the option to have numeric states or submit to stay with literal states
+3. Select all the pollens you want to have in sensors
 
-Add this to your `configuration.yaml`:
+You can also configure option to change default scan interval (3 hours)
+
+Pollens platform must be removed from `configuration.yaml` file
+
+~~Add this to your `configuration.yaml`:~~
 
 ```yaml
 sensor:
