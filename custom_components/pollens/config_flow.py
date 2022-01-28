@@ -3,24 +3,23 @@ from __future__ import annotations
 
 import logging
 from typing import Any
-from aiohttp import ClientError
 
 import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
 
 from homeassistant import config_entries, exceptions
-from homeassistant.const import CONF_RESOURCE
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import aiohttp_client
 
 from .const import (
-    CONF_LOCATIONS,
     DOMAIN,
+    KEY_TO_ATTR,
     CONF_COUNTRYCODE,
-    CONF_FILTER,
     CONF_SCAN_INTERVAL,
+    CONF_POLLENSLIST,
+    CONF_LITERAL,
 )
 from .dept import DEPARTMENTS
 
@@ -45,8 +44,7 @@ async def validate_input(hass: HomeAssistant, data: dict) -> dict[str, Any]:
         # If there is an error, raise an exception to notify HA that there was a
         # problem. The UI will also show there was a problem
         raise CannotConnect
-    county = client.county_name
-    title = f" Pollens {client.county_name}"
+    title = f"Pollens {client.county_name}"
     return {"title": title}
 
 
@@ -60,22 +58,19 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     # changes.
     CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_POLL
 
+    def __init__(self):
+        """Initialize"""
+        self.data = None
+        self._init_info = {}
+
     async def async_step_user(self, user_input=None):
         """Handle the initial step."""
-        # This goes through the steps to take the user through the setup process.
-        # Using this it is possible to update the UI and prompt for additional
-        # information. This example provides a single form (built from `DATA_SCHEMA`),
-        # and when that has some validated input, it calls `async_create_entry` to
-        # actually create the HA config entry. Note the "title" value is returned by
-        # `validate_input` above.
         errors = {}
-        if self._async_current_entries():
-            return self.async_abort(reason="single_instance_allowed")
         if user_input is not None:
             try:
-                info = await validate_input(self.hass, user_input)
-
-                return self.async_create_entry(title=info["title"], data=user_input)
+                self._init_info["data"] = user_input
+                self._init_info["info"] = await validate_input(self.hass, user_input)
+                return await self.async_step_select_pollens()
             except CannotConnect:
                 errors["base"] = "cannot_connect"
             except InvalidCounty:
@@ -85,37 +80,52 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 _LOGGER.exception("Unexpected exception")
                 errors["base"] = "unknown"
 
+        entries = self._async_current_entries()
+        # Remove county from the list (already configured)
+        for entry in entries:
+            DEPARTMENTS.pop(entry.data[CONF_COUNTRYCODE])
+
         # If there is no user input or there were errors, show the form again, including any errors that were found with the input.
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema(
                 {
                     vol.Required(CONF_COUNTRYCODE, default=["60"]): vol.In(DEPARTMENTS),
+                    vol.Required(CONF_LITERAL, default=True): cv.boolean,
                 }
             ),
             description_placeholders={"docs_url": "pollens.fr"},
             errors=errors,
         )
 
-    async def async_step_import(self, conf: dict) -> FlowResult:
-        """Import a configuration from config.yaml."""
-        return await self.async_step_user(
-            user_input={CONF_COUNTRYCODE: conf[CONF_LOCATIONS]}
-        )
+    # async def async_step_import(self, conf: dict) -> FlowResult:
+    #     """Import a configuration from configuration.yaml."""
+    #     return await self.async_step_user(
+    #         user_input={CONF_COUNTRYCODE: conf[CONF_LOCATIONS]}
+    #     )
 
-    def host_already_configured(self, host: str) -> bool:
-        """See if we already have a dunehd entry matching user input configured."""
-        existing_hosts = {
-            entry.data[CONF_COUNTRYCODE] for entry in self._async_current_entries()
-        }
-        return host in existing_hosts
+    async def async_step_select_pollens(self, user_input=None):
+        """Select pollens step 2"""
+        if user_input is not None:
+            _LOGGER.info("Select pollens step")
+            self._init_info["data"][CONF_POLLENSLIST] = user_input[CONF_POLLENSLIST]
+            return self.async_create_entry(
+                title=self._init_info["info"]["title"], data=self._init_info["data"]
+            )
+        pollens = [pollen for pollen in KEY_TO_ATTR]
+        return self.async_show_form(
+            step_id="select_pollens",
+            data_schema=vol.Schema(
+                {vol.Optional(CONF_POLLENSLIST): cv.multi_select(pollens)}
+            ),
+        )
 
     @staticmethod
     @callback
     def async_get_options_flow(
         config_entry: ConfigEntry,
     ) -> OptionsFlowHandler:
-        """Options callback for AccuWeather."""
+        """Options callback for Pollens."""
         return OptionsFlowHandler(config_entry)
 
 
@@ -124,37 +134,44 @@ class CannotConnect(exceptions.HomeAssistantError):
 
 
 class InvalidCounty(exceptions.HomeAssistantError):
-    """Error to indicate we cannot connect."""
+    """Error to invalid county."""
+
+
+class InvalidScanInterval(exceptions.HomeAssistantError):
+    """Error to invalid scan interval ."""
 
 
 class OptionsFlowHandler(config_entries.OptionsFlow):
-    """Config flow options for AccuWeather."""
+    """Config flow options for Pollens."""
 
     def __init__(self, entry: ConfigEntry) -> None:
-        """Initialize AccuWeather options flow."""
+        """Initialize Pollens options flow."""
         self.config_entry = entry
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
-        """Manage the options."""
-        return await self.async_step_user()
-
-    async def async_step_user(
-        self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
         """Handle a flow initialized by the user."""
+        _LOGGER.info("Changing options of pollens integration")
+        errors = {}
         if user_input is not None:
+            # Validate the data can be used to set up a connection.
+            _LOGGER.info(
+                "Change option of %s to %s",
+                self.config_entry.title,
+                user_input[CONF_SCAN_INTERVAL],
+            )
             return self.async_create_entry(title="", data=user_input)
 
         return self.async_show_form(
-            step_id="user",
+            step_id="init",
             data_schema=vol.Schema(
                 {
                     vol.Optional(
                         CONF_SCAN_INTERVAL,
-                        default=self.config_entry.options.get(CONF_SCAN_INTERVAL, 60),
-                    ): cv.positive_int,
+                        default=self.config_entry.options.get(CONF_SCAN_INTERVAL, 1),
+                    ): vol.All(vol.Coerce(int), vol.Range(min=1, max=24)),
                 }
             ),
+            errors=errors,
         )

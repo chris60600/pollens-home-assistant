@@ -3,12 +3,19 @@
     "config": {
       "step": {
         "user": {
-          "title":"Pollens",
+          "title":"Pollens - Step #1",
           "description":"If you need information about pollens on site R.N.S.A. website, have a look here: https://www.pollens.fr",
           "data": {
             "county": "[%key:common::config_flow::data::county%]",
             "scan_interval": "[%key:common::config_flow::data::scan_interval%]",
-            "filter": "[%key:common::config_flow::data::filter%]"
+            "literal_states":"[%key:common::config_flow::data::literal_states"
+          }
+        },
+        "select_pollens": {
+          "title":"Pollens - Step #2",
+          "description":"Select pollens \r\nhttps://www.pollens.fr",
+          "data": {
+            "pollens_list": "Select pollens from list"
           }
         }
       },
@@ -21,5 +28,18 @@
         "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
         "single_instance_allowed": "[%key:common::config_flow::abort::single_instance_allowed"
       }
+    },
+    "options":{
+      "step":{
+        "init":{
+          "data":{
+            "scan_interval": "Scan interval"
+          }
+        }
+      },
+      "error": {
+        "invalid_scan_interval":"[%key:common::config_flow::error::invalid_scan_interval%]"
+      }
+
     }
   }

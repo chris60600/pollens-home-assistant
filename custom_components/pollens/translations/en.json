@@ -12,12 +12,35 @@
         },
         "step": {
             "user": {
+                "title":"Pollens - Step #1",
+                "description":"Select county \r\nhttps://www.pollens.fr",
                 "data": {
                     "county": "County",
-                    "scan_interval": "Scan interval",
-                    "filter": "Filter level"
+                    "scan_interval": "Scan interval (hours)",
+                    "literal_states":"States in literal (in numeric if not selected)"
+                }
+            },
+            "select_pollens": {
+                "title":"Pollens - Step #2",
+                "description":"Select pollens \r\nhttps://www.pollens.fr",
+                "data": {
+                  "pollens_list": "Select pollens from list"
                 }
             }
         }
-   }
+    },
+    "options":{
+        "step":{
+          "init":{
+            "data":{
+              "scan_interval": "Scan interval (hours)"
+            }
+          }
+        },
+        "error": {
+            "invalid_scan_interval": "Invalid scan interval. Must be higher than 1 hour"
+        }
+
+    }
+
 }

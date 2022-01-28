@@ -15,6 +15,7 @@ from homeassistant.helpers import aiohttp_client
 from homeassistant.helpers.config_validation import SCRIPT_ACTION_FIRE_EVENT
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.device_registry import DeviceEntryType
+from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
     CoordinatorEntity,
@@ -25,6 +26,7 @@ from .const import (
     ATTRIBUTION,
     DOMAIN,
     COORDINATOR,
+    UNDO_LISTENER,
     CONF_COUNTRYCODE,
     CONF_SCAN_INTERVAL,
     KEY_TO_ATTR,
@@ -38,6 +40,11 @@ PLATFORMS: list[str] = [Platform.SENSOR]
 _LOGGER = logging.getLogger(__name__)
 
 
+async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
+    """Set up pollens integation"""
+    return True
+
+
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up pollens from a config entry."""
 
@@ -47,9 +54,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     api = PollensClient(session)
 
     county = conf[CONF_COUNTRYCODE]
-    scan_interval = entry.options.get(CONF_SCAN_INTERVAL, 60)
-    # scan_interval = int(conf[CONF_SCAN_INTERVAL])
-    # level_filter = conf[CONF_FILTER]
+    scan_interval = entry.options.get(CONF_SCAN_INTERVAL, 3)
 
     await api.Get(county)
 
@@ -59,16 +64,20 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass=hass,
         name=name,
         scan_interval=scan_interval,
-        # level_filter=level_filter,
         county=county,
         api=api,
     )
 
     await coordinator.async_config_entry_first_refresh()
 
+    # Add and update listener
+    undo_listener = entry.add_update_listener(_async_update_listener)
+
+    # Setup coordinator
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][entry.entry_id] = {
         COORDINATOR: coordinator,
+        UNDO_LISTENER: undo_listener,
         "pollens_api": api,
     }
 
@@ -78,14 +87,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
-    # This is called when an entry/configured device is to be removed. The class
-    # needs to unload itself, and remove callbacks. See the classes for further
-    # details
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:
         hass.data[DOMAIN].pop(entry.entry_id)
-
     return unload_ok
+
+
+async def _async_update_listener(hass: HomeAssistant, entry: ConfigEntry):
+    """Update when config_entry options update"""
+    await hass.config_entries.async_reload(entry.entry_id)
 
 
 class PollensUpdateCoordinator(DataUpdateCoordinator):
@@ -105,20 +115,19 @@ class PollensUpdateCoordinator(DataUpdateCoordinator):
             hass=hass,
             logger=_LOGGER,
             name=name,
-            update_interval=timedelta(minutes=scan_interval),
+            update_interval=timedelta(hours=scan_interval),
         )
 
         self.api = api
         self.name = name
         self.county = county
-        # self.level_filter = int(level_filter)
 
     async def _async_update_data(self):
-        _LOGGER.info("Update data from web site for %s", self.county)
+        _LOGGER.info("Update data from web site for %s", self.name)
         try:
             return await self.api.Get(self.county)
-        except ClientError as errot:
-            raise UpdateFailed(f"Errro updating from RSSA : {error}") from error
+        except ClientError as error:
+            raise UpdateFailed(f"Error updating from RSSA : {error}") from error
 
 
 class PollensEntity(CoordinatorEntity):

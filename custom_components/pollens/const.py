@@ -1,15 +1,16 @@
 """Constants for the Pollens integration."""
 
 DOMAIN = "pollens"
-COORDINATOR = "coordinator"
 ATTRIBUTION = "Data from Reseau National de Surveillance Aerobiologique "
+
+COORDINATOR = "coordinator"
+UNDO_LISTENER = "undo_listener"
 
 CONF_COUNTRYCODE = "county"
 CONF_SCAN_INTERVAL = "scan_interval"
-CONF_FILTER = "filter"
-CONF_LOCATIONS = "location"
-CONF_TIMEOUT = "timeout"
 CONF_SCANINTERVAL = "scaninterval"
+CONF_POLLENSLIST = "pollens_list"
+CONF_LITERAL = "literal_states"
 
 ATTR_TILLEUL = "tilleul"
 ATTR_AMBROISIES = "ambroisies"
@@ -31,6 +32,8 @@ ATTR_FRENE = "frene"
 ATTR_SAULE = "saule"
 ATTR_CYPRES = "cypres"
 ATTR_CUPRESSASEES = "cupressacees"
+ATTR_LITERAL_STATE = "literal_state"
+ATTR_POLLEN_NAME = "pollen_name"
 
 ICON_FLOWER = "mdi:flower"
 ICON_TREE = "mdi:tree"

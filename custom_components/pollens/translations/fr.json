@@ -14,12 +14,32 @@
             "user": {
                 "data": {
                     "county": "D\u00e9partement",
-                    "scan_interval": "P\u00e9riode d\u0027int\u00e9rogation",
-                    "filter": "Filtrage du niveau"
+                    "scan_interval": "P\u00e9riode d\u0027int\u00e9rogation (heures)",
+                    "literal_states": "Etats en texte (non selection\u00e9 = num\u00e9rique)"
                 },
-                "title":"Pollens",
+                "title":"Pollens - Etape #1",
                 "description":"Si vous avez besoin d\u0027information sur les pollens rendez vous sur le site du R.N.S.A, https://www.pollens.fr"
+            },
+            "select_pollens": {
+                "title":"Pollens - Etape #2",
+                "description":"Selection des pollens \r\nhttps://www.pollens.fr",
+                "data": {
+                    "pollens_list": "Selectionnez un/des pollens dans la liste"
+                }
             }
         }
-   }
+    },
+    "options":{
+        "step":{
+          "init":{
+            "data":{
+              "scan_interval": "P\u00e9riode d\u0027int\u00e9rogation (heures)"
+            }
+          }
+        },
+        "error": {
+            "invalid_scan_interval": "La periode d interrogation doit etre superieure a 1 heure"
+
+        }
+    }
 }
