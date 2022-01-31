@@ -14,6 +14,7 @@ from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import aiohttp_client
 
 from .const import (
+    CONF_VERSION,
     DOMAIN,
     KEY_TO_ATTR,
     CONF_COUNTRYCODE,
@@ -51,7 +52,7 @@ async def validate_input(hass: HomeAssistant, data: dict) -> dict[str, Any]:
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Hello World."""
 
-    VERSION = 1
+    VERSION = CONF_VERSION
     # Pick one of the available connection classes in homeassistant/config_entries.py
     # This tells HA if it should be asking for updates, or it'll be notified of updates
     # automatically. This example uses PUSH, as the dummy hub will notify HA of
@@ -83,7 +84,8 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         entries = self._async_current_entries()
         # Remove county from the list (already configured)
         for entry in entries:
-            DEPARTMENTS.pop(entry.data[CONF_COUNTRYCODE])
+            if entry.data[CONF_COUNTRYCODE] in DEPARTMENTS:
+                DEPARTMENTS.pop(entry.data[CONF_COUNTRYCODE])
 
         # If there is no user input or there were errors, show the form again, including any errors that were found with the input.
         return self.async_show_form(

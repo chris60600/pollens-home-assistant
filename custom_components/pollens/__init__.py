@@ -9,10 +9,9 @@ from typing import Any
 from aiohttp.client_exceptions import ClientError
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_SCAN_INTERVAL, Platform
+from homeassistant.const import CONF_SCAN_INTERVAL, CONF_SENSORS, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import aiohttp_client
-from homeassistant.helpers.config_validation import SCRIPT_ACTION_FIRE_EVENT
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.device_registry import DeviceEntryType
 from homeassistant.helpers.typing import ConfigType
@@ -24,6 +23,9 @@ from homeassistant.helpers.update_coordinator import (
 
 from .const import (
     ATTRIBUTION,
+    CONF_LITERAL,
+    CONF_POLLENSLIST,
+    CONF_VERSION,
     DOMAIN,
     COORDINATOR,
     UNDO_LISTENER,
@@ -31,6 +33,7 @@ from .const import (
     CONF_SCAN_INTERVAL,
     KEY_TO_ATTR,
 )
+
 from .pollensasync import PollensClient
 
 # List of platforms to support. There should be a matching .py file for each,
@@ -82,6 +85,25 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     }
 
     hass.config_entries.async_setup_platforms(entry, PLATFORMS)
+    return True
+
+
+async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    """Migrate the config entry upon new versions."""
+    version = entry.version
+    data = {**entry.data}
+
+    _LOGGER.debug("Migrating from version %s", version)
+
+    # 1 -> 2: Remove unused condition data:
+    if version == 1:
+        data.pop(CONF_SENSORS, None)
+        entry.data[CONF_POLLENSLIST] = [pollen for pollen in KEY_TO_ATTR]
+        entry.data[CONF_LITERAL] = True
+        version = entry.version = CONF_VERSION
+        hass.config_entries.async_update_entry(entry, data=data)
+        _LOGGER.debug("Migration to version %s successful", version)
+
     return True
 
 

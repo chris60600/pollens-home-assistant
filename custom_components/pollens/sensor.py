@@ -1,11 +1,13 @@
 ﻿"""Support for the RNSA pollens service."""
 
 import logging
+from warnings import catch_warnings
+
+from yaml import KeyToken
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.components.sensor import SensorEntity
 
 from homeassistant.core import HomeAssistant
-from homeassistant.const import ATTR_FRIENDLY_NAME
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import (
@@ -41,7 +43,10 @@ async def async_setup_entry(
     """Setup Sensor Plateform"""
     coordinator = hass.data[DOMAIN][entry.entry_id][COORDINATOR]
     sensors = []
-    enabled_pollens = entry.data[CONF_POLLENSLIST]
+    try:
+        enabled_pollens = entry.data[CONF_POLLENSLIST]
+    except KeyError:
+        enabled_pollens = [pollen for pollen in KEY_TO_ATTR]
     for risk in coordinator.api.risks:
         name = risk
         icon = KEY_TO_ATTR[risk.lower()][1]
@@ -73,7 +78,10 @@ class PollenSensor(PollensEntity, SensorEntity):
         self._unique_id = f"{entry.entry_id}_{self._name}"
         self._attr_name = name
         self._attr_unique_id = self._unique_id
-        self._literal_state = entry.data[CONF_LITERAL]
+        try:
+            self._literal_state = entry.data[CONF_LITERAL]
+        except KeyError:
+            self._literal_state = True
         self._attr_icon = icon
         self._friendly_name = f"{name}"
 
