@@ -2,7 +2,7 @@
 
 DOMAIN = "pollens"
 ATTRIBUTION = "Data from Reseau National de Surveillance Aerobiologique "
-
+CONF_VERSION = 2
 COORDINATOR = "coordinator"
 UNDO_LISTENER = "undo_listener"
 

@@ -98,8 +98,8 @@ async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # 1 -> 2: Remove unused condition data:
     if version == 1:
         data.pop(CONF_SENSORS, None)
-        entry.data[CONF_POLLENSLIST] = [pollen for pollen in KEY_TO_ATTR]
-        entry.data[CONF_LITERAL] = True
+        data[CONF_POLLENSLIST] = [pollen for pollen in KEY_TO_ATTR]
+        data[CONF_LITERAL] = True
         version = entry.version = CONF_VERSION
         hass.config_entries.async_update_entry(entry, data=data)
         _LOGGER.debug("Migration to version %s successful", version)
