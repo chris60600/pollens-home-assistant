@@ -27,12 +27,10 @@ from . import PollensEntity, PollensUpdateCoordinator
 _LOGGER = logging.getLogger(__name__)
 
 ICONS = {
-    0: "mdi:check",
-    1: "mdi:check",
-    2: "mdi:alert-outline",
-    3: "mdi:alert-outline",
-    4: "mdi:alert",
-    5: "mdi:alert",
+    0: "mdi:decagram-outline",
+    1: "mdi:decagram-check",
+    2: "mdi:alert-decagram-outline",
+    3: "mdi:alert-decagram",
 }
 
 
