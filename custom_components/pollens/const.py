@@ -64,4 +64,4 @@ KEY_TO_ATTR = {
 ATTR_COUNTY_NAME = "departement"
 ATTR_URL = "url"
 
-LIST_RISK = ["nul", "très faible", "faible", "moyen", "élevé", "très eleve"]
+LIST_RISK = ["nul", "faible", "moyen", "élevé"]
