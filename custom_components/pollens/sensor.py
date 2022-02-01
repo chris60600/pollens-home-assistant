@@ -23,7 +23,6 @@ from .const import (
     CONF_LITERAL,
 )
 from . import PollensEntity, PollensUpdateCoordinator
-from config.custom_components import pollens
 
 _LOGGER = logging.getLogger(__name__)
 
