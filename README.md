@@ -25,29 +25,14 @@ You can install this custom component using [HACS](https://hacs.xyz/) by adding 
 6. Restart Home Assistant
 
 ## Configuration
-The pollens integration is now available in the Integration Menu
+The pollens integration is **now available in the Integration Menu
 1. Select your county
 2. Untick the option to have numeric states or submit to stay with literal states
 3. Select all the pollens you want to have in sensors
 
 You can also configure option to change default scan interval (3 hours)
 
-Pollens platform must be removed from `configuration.yaml` file
-
-~~Add this to your `configuration.yaml`:~~
-
-```yaml
-sensor:
-  - platform: pollens
-    location: "60"
-    timeout: 60
-    filter: 1
-```
-Name|Required|Description|Default
---|--|--|--
-`location`|yes|Department number||
-`timeout`|no|Timeout for web site response| (deprecated) |
-`filter`|no|Filter level under giving value|0 (deprecated)|
+Old Pollens platform configuration **must be removed** from `configuration.yaml` file
 
 This will create one sensor ~~and severals attributes~~ :
 * sensor.pollens_*dept*
