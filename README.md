@@ -25,7 +25,7 @@ You can install this custom component using [HACS](https://hacs.xyz/) by adding 
 6. Restart Home Assistant
 
 ## Configuration
-The pollens integration is **now available in the Integration Menu
+The pollens integration is **now available in the Integration Menu**
 1. Select your county
 2. Untick the option to have numeric states or submit to stay with literal states
 3. Select all the pollens you want to have in sensors
