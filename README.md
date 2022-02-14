@@ -1,3 +1,4 @@
+[![Downloads for latest release](https://img.shields.io/github/downloads/chris60600/pollens-home-assistant/latest/total)](https://github.com/hacs/integration/releases/latest)
 # Pollens home assistant
 
 This module show pollen concentration inside [Homeassistant](https://home-assistant.io):
