@@ -3,6 +3,7 @@
 [![](https://img.shields.io/github/manifest-json/v/chris60600/pollens-home-assistant?filename=custom_components%2Fpollens%2Fmanifest.json)](https://github.com/chris60600/pollens-home-assistant/)
 [![](https://img.shields.io/badge/Maintainer-%40chris60600-green)](https://github.com/chris60600)
 ![](https://img.shields.io/badge/Language-fr-green)
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=flat-square)](https://github.com/custom-components/hacs)
 
 # Pollens home assistant
 
