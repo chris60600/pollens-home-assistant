@@ -34,19 +34,22 @@ You can install this custom component using [HACS](https://hacs.xyz/) by adding 
 ## Configuration
 The pollens integration is **now available in the Integration Menu**
 1. Select your county
-2. Untick the option to have numeric states or submit to stay with literal states
+2. Untick the option to have numeric states or submit to stay with literal states (for particular pollens sensors only)
 3. Select all the pollens you want to have in sensors
 
 You can also configure option to change default scan interval (3 hours)
 
 Old Pollens platform configuration **must be removed** from `configuration.yaml` file
 
-This will create one sensor ~~and severals attributes~~ :
+This will create 2 sensors :
 * sensor.pollens_*dept*
-  * attribution: Data from Reseau National de Surveillance Aerobiologique 
+  * value: global risk level for your county in **literal** state 
+  * url: https://pollens.fr
   * departement: *dept*
-  * *pollen* : *concentration*
 
-Sensors with particular Pollens like : 
+* sensor.pollens_*dept*_num
+  * value: global risk level for your county in **numeric** state (for graphs / gauges...)
+
+Sensors will also be created for selected particular Pollens : 
 Tilleul, Ambroisies, Olivier, Plantain, Noisetier, Aulne, Armoise, Châtaignier, Urticacées, Oseille, Graminées, Chêne, Platane, Bouleau, Charme, Peuplier, Frêne, Saule, Cyprès, Cupressacées.
-All sensors are named sensor.pollens_*dept*_*pollen-name*
+These sensors are named sensor.pollens_*dept*_*pollen-name*

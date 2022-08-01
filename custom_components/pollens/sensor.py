@@ -53,7 +53,10 @@ async def async_setup_entry(
     name = f"pollens_{coordinator.county}"
     icon = ICONS[0]
     sensors.append(
-        RiskSensor(coordinator=coordinator, name=name, icon=icon, entry=entry)
+        RiskSensor(coordinator=coordinator, name=name, icon=icon, entry=entry, numeric=False)
+    )
+    sensors.append(
+        RiskSensor(coordinator=coordinator, name=name + "_num", icon=icon, entry=entry, numeric=True)
     )
 
     async_add_entities(sensors, True)
@@ -120,17 +123,24 @@ class RiskSensor(PollensEntity, SensorEntity):
         name: str,
         icon: str,
         entry: ConfigEntry,
+        numeric: bool
     ) -> None:
         super().__init__(coordinator, name, icon, entry)
         self._risk_level = coordinator.api.risk_level
         self._attr_unique_id = f"{entry.entry_id}_{coordinator.county}"
         self._attr_icon = icon
         self._name = name
+        self._numeric = numeric
+        if numeric:
+            self._attr_unique_id += "_num"
 
     @property
     def native_value(self):
         value = self.coordinator.api.risk_level
-        return LIST_RISK[value]
+        if self._numeric:
+            return value
+        else:
+            return LIST_RISK[value]
 
     @property
     def icon(self):

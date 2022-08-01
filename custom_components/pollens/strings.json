@@ -8,7 +8,7 @@
           "data": {
             "county": "[%key:common::config_flow::data::county%]",
             "scan_interval": "[%key:common::config_flow::data::scan_interval%]",
-            "literal_states":"[%key:common::config_flow::data::literal_states"
+            "literal_states":"[%key:common::config_flow::data::literal_states%]"
           }
         },
         "select_pollens": {
@@ -26,7 +26,7 @@
       },
       "abort": {
         "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
-        "single_instance_allowed": "[%key:common::config_flow::abort::single_instance_allowed"
+        "single_instance_allowed": "[%key:common::config_flow::abort::single_instance_allowed%]"
       }
     },
     "options":{
