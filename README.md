@@ -47,7 +47,7 @@ This will create 2 sensors :
   * url: https://pollens.fr
   * departement: *dept*
 
-* sensor.pollens_*dept*_num
+* sensor.pollens_*dept*_risklevel
   * value: global risk level for your county in **numeric** state (for graphs / gauges...)
 
 Sensors will also be created for selected particular Pollens : 
