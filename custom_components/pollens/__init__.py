@@ -83,8 +83,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         UNDO_LISTENER: undo_listener,
         "pollens_api": api,
     }
-
-    hass.config_entries.async_setup_platforms(entry, PLATFORMS)
+    if hacs.core.ha_version >= "2022.8.0.dev0":
+        await hass.config_entries.async_forward_entry_setups(config_entry, platforms)
+    else:
+        hass.config_entries.async_setup_platforms(entry, PLATFORMS)
     return True
 
 
