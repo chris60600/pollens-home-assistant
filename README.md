@@ -1,4 +1,4 @@
-[![Downloads for latest release](https://img.shields.io/github/downloads/chris60600/pollens-home-assistant/latest/total)](https://github.com/hacs/integration/releases/latest)
+[![Downloads for latest release](https://img.shields.io/github/downloads/chris60600/pollens-home-assistant/latest/total)](https://github.com/chris60600/pollens-home-assistant/releases/latest)
 [![](https://img.shields.io/github/issues/chris60600/pollens-home-assistant)](https://github.com/chris60600/pollens-home-assistant/issues)
 [![](https://img.shields.io/github/manifest-json/v/chris60600/pollens-home-assistant?filename=custom_components%2Fpollens%2Fmanifest.json)](https://github.com/chris60600/pollens-home-assistant/)
 [![](https://img.shields.io/badge/Maintainer-%40chris60600-green)](https://github.com/chris60600)
