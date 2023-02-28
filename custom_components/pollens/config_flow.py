@@ -1,4 +1,4 @@
-"""Config flow for Hello World integration."""
+"""Config flow for Pollens integration."""
 from __future__ import annotations
 
 import logging
@@ -50,7 +50,7 @@ async def validate_input(hass: HomeAssistant, data: dict) -> dict[str, Any]:
 
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    """Handle a config flow for Hello World."""
+    """Handle a config flow for Pollens."""
 
     VERSION = CONF_VERSION
     # Pick one of the available connection classes in homeassistant/config_entries.py
