@@ -5,7 +5,7 @@ from warnings import catch_warnings
 
 from yaml import KeyToken
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.sensor import SensorEntity, SensorDeviceClass, SensorStateClass
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -80,6 +80,11 @@ class PollenSensor(PollensEntity, SensorEntity):
         self._attr_unique_id = self._unique_id
         try:
             self._literal_state = entry.data[CONF_LITERAL]
+            # Setup DeviceClass in AQI and stateClass in numeric (Issue #15)
+            if not self._literal_state:
+                self._attr_device_class = SensorDeviceClass.AQI
+                self._attr_state_class = SensorStateClass.MEASUREMENT
+
         except KeyError:
             self._literal_state = True
         self._attr_icon = icon
@@ -133,6 +138,8 @@ class RiskSensor(PollensEntity, SensorEntity):
         self._numeric = numeric
         if numeric:
             self._attr_unique_id += "_risklevel"
+            self._attr_device_class = SensorDeviceClass.AQI
+            self._attr_state_class = SensorStateClass.MEASUREMENT
 
     @property
     def native_value(self):
