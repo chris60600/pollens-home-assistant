@@ -20,7 +20,8 @@ and dzvents script [pon.fr](https://pon.fr/dzvents-alerte-pollens/)
 
 ### HACS (recommended)
 
-You can install this custom component using [HACS](https://hacs.xyz/) by adding a custom repository.
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=chris60600&repository=pollens-home-assistant&category=integration)
+If the link above does not work, you can install this custom component using [HACS](https://hacs.xyz/) by adding a custom repository.
 
 ### Manual install
 
@@ -32,6 +33,7 @@ You can install this custom component using [HACS](https://hacs.xyz/) by adding 
 6. Restart Home Assistant
 
 ## Configuration
+[![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=pollens)
 The pollens integration is **now available in the Integration Menu**
 1. Select your county
 2. Untick the option to have numeric states or submit to stay with literal states (for particular pollens sensors only)
