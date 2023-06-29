@@ -47,8 +47,7 @@ async def async_setup_entry(
     for risk in coordinator.api.risks:
         name = risk
         icon = KEY_TO_ATTR[risk.lower()][1]
-        if name.lower() in enabled_pollens:
-            sensors.append(PollenSensor(coordinator, name=name, icon=icon, entry=entry))
+        sensors.append(PollenSensor(coordinator, name=name, icon=icon, entry=entry, enabled=name.lower() in enabled_pollens))
 
     name = f"pollens_{coordinator.county}"
     icon = ICONS[0]
@@ -71,6 +70,7 @@ class PollenSensor(PollensEntity, SensorEntity):
         name: str,
         icon: str,
         entry: ConfigEntry,
+        enabled: bool
     ) -> None:
         super().__init__(coordinator, name, icon, entry)
         self._name = f"pollens_{coordinator.county}_{KEY_TO_ATTR[name.lower()][0]}"
@@ -78,6 +78,8 @@ class PollenSensor(PollensEntity, SensorEntity):
         self._unique_id = f"{entry.entry_id}_{self._name}"
         self._attr_name = name
         self._attr_unique_id = self._unique_id
+        self._attr_entity_registry_enabled_default = enabled
+
         try:
             self._literal_state = entry.data[CONF_LITERAL]
             # Setup DeviceClass in AQI and stateClass in numeric (Issue #15)
