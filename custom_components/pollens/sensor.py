@@ -28,9 +28,9 @@ _LOGGER = logging.getLogger(__name__)
 
 ICONS = {
     0: "mdi:decagram-outline",
-    1: "mdi:decagram-check",
-    2: "mdi:alert-decagram-outline",
-    3: "mdi:alert-decagram",
+    20: "mdi:decagram-check",
+    100: "mdi:alert-decagram-outline",
+    200: "mdi:alert-decagram",
 }
 
 
