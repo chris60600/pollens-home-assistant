@@ -140,7 +140,7 @@ class RiskSensor(PollensEntity, SensorEntity):
         self._numeric = numeric
         if numeric:
             self._attr_unique_id += "_risklevel"
-            self._attr_device_class = SensorDeviceClass.AQI
+            self._attr_device_class = SensorDeviceClass.GAS
             self._attr_state_class = SensorStateClass.MEASUREMENT
 
     @property
