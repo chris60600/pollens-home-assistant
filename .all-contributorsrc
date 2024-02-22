@@ -10,14 +10,5 @@
   "contributorsSortAlphabetically": false,
   "linkToUsage": true,
   "skipCi": true,
-  "contributors": [
-    {
-      "login": "Nardol",
-      "name": "Patrick ZAJDA",
-      "contributions": [
-        "code",
-        "doc"
-      ]
-    }
-  ]
+  "contributors": []
 }
