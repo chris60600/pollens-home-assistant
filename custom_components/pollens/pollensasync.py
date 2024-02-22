@@ -45,7 +45,15 @@ class PollensClient:
             self._county_name = request_json["countyName"]
             for risk in request_json["risks"]:
                 self._risks[risk["pollenName"]] = risk["level"]
-            self._risk_level = request_json["riskLevel"]
+            r_level = request_json["riskLevel"]
+            if r_level == 0:
+               self._risk_level = 0
+            elif r_level == 1:
+               self._risk_level = 20
+            elif r_level == 2:
+               self._risk_level = 100
+            else:
+               self._risk_level = 200
             return request_json
         except (ClientError, asyncio.TimeoutError, ConnectionRefusedError) as err:
             return None
