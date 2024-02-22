@@ -14,8 +14,17 @@
     {
       "login": "chris60600",
       "name": "Christophe",
-      "avatar_url": "https://avatars.githubusercontent.com/u/57842361?s=400&v=4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/57842361?v=4",
       "profile": "https://github.com/chris60600",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "mathoudebine",
+      "name": "Matthieu Houdebine",
+      "avatar_url": "https://avatars.githubusercontent.com/u/38615348?v=4",
+      "profile": "http://matthieu-houdebine.fr/",
       "contributions": [
         "code"
       ]
