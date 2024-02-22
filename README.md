@@ -4,6 +4,7 @@
 [![](https://img.shields.io/badge/Maintainer-%40chris60600-green)](https://github.com/chris60600)
 ![](https://img.shields.io/badge/Language-fr-green)
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)
+[![All Contributors](https://img.shields.io/github/all-contributors/chris60600/pollen-home-assistant?color=ee8449&style=flat-square)](#contributors)
 
 # Pollens home assistant
 
