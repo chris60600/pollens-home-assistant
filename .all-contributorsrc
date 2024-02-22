@@ -10,5 +10,15 @@
   "contributorsSortAlphabetically": false,
   "linkToUsage": true,
   "skipCi": true,
-  "contributors": []
+  "contributors": [
+    {
+      "login": "chris60600",
+      "name": "Christophe",
+      "avatar_url": "https://avatars.githubusercontent.com/u/57842361?s=400&v=4",
+      "profile": "https://github.com/chris60600",
+      "contributions": [
+        "code"
+      ]
+    }
+  ]
 }
